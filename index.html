@@ -3,68 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fleming Assigner</title>
+    <title>Fleming Assigner | Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; padding: 50px; background: #f0f2f5; }
-        .card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
-        input, select, button { width: 100%; padding: 10px; margin-top: 10px; border-radius: 4px; border: 1px solid #ccc; box-sizing: border-box; }
-        button { background: #000; color: white; cursor: pointer; border: none; font-weight: bold; }
-        button:disabled { background: #ccc; }
+        :root {
+            --bg-dark: #121212;
+            --sidebar-bg: #1A1C1E;
+            --card-bg: #1E1E1E;
+            --accent: #4DABF7;
+            --text-main: #FFFFFF;
+            --text-dim: #ADB5BD;
+            --border: #2C2E33;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar Navigation */
+        nav {
+            width: 260px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+        }
+
+        .logo-area {
+            font-weight: 600;
+            font-size: 1.25rem;
+            margin-bottom: 48px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-item {
+            padding: 12px;
+            color: var(--text-dim);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: 0.2s;
+        }
+
+        .nav-item.active {
+            background: rgba(77, 171, 247, 0.1);
+            color: var(--accent);
+        }
+
+        /* Main Content Area */
+        main {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .header {
+            margin-bottom: 32px;
+        }
+
+        .header h1 { margin: 0; font-size: 28px; }
+        .header p { color: var(--text-dim); margin-top: 8px; }
+
+        /* Dashboard Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        /* Form Styling from Figma */
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: var(--text-dim); font-size: 14px; }
+        input, select {
+            width: 100%;
+            background: #25262B;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            color: white;
+            font-size: 14px;
+        }
+
+        button {
+            width: 100%;
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover { opacity: 0.9; }
+
+        /* Custom Status colors */
+        .status-msg { margin-top: 15px; text-align: center; font-size: 14px; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h2>Fleming Assigner</h2>
-        <form id="assignForm">
-            <input type="text" id="member" placeholder="Member Name" required>
-            <input type="text" id="task" placeholder="Task" required>
-            <select id="priority">
-                <option value="Low">Low</option>
-                <option value="Medium">Medium</option>
-                <option value="High">High</option>
-            </select>
-            <button type="submit" id="submitBtn">Send to Google Sheets</button>
-        </form>
-        <p id="msg"></p>
-    </div>
+
+    <nav>
+        <div class="logo-area">
+            <div style="width: 24px; height: 24px; background: var(--accent); border-radius: 4px;"></div>
+            Fleming Assigner
+        </div>
+        <a href="#" class="nav-item active">Dashboard</a>
+        <a href="#" class="nav-item">Assignments</a>
+        <a href="#" class="nav-item">Team Members</a>
+        <a href="#" class="nav-item">Settings</a>
+    </nav>
+
+    <main>
+        <div class="header">
+            <h1>Create Assignment</h1>
+            <p>Input details to sync directly with the Google Sheets database.</p>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <form id="assignForm">
+                    <div class="form-group">
+                        <label>Member Name</label>
+                        <input type="text" id="member" placeholder="e.g. Dr. Fleming" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Task / Responsibility</label>
+                        <input type="text" id="task" placeholder="What needs to be done?" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Priority Level</label>
+                        <select id="priority">
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                    </div>
+                    <button type="submit" id="submitBtn">Deploy to Sheets</button>
+                </form>
+                <div id="statusMsg" class="status-msg"></div>
+            </div>
+
+            <div class="card" style="display: flex; flex-direction: column; gap: 20px;">
+                <div style="font-size: 14px; color: var(--text-dim);">SYSTEM STATUS</div>
+                <div style="font-size: 24px; font-weight: 600; color: #40C057;">● Online</div>
+                <hr style="border: 0; border-top: 1px solid var(--border); width: 100%;">
+                <p style="font-size: 13px; color: var(--text-dim);">This interface is linked to Vercel and pushes data to your Apps Script backend.</p>
+            </div>
+        </div>
+    </main>
 
     <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxB3P4iQMKiGtKQzUw3OZSPVzAdiYrCLqmpvpvmWhcVYJTo1m0q4XjcqP4BECXhWFBgxA/exec'; // <--- PASTE URL HERE
+        // Replace with your Apps Script Web App URL
+        const SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
 
         document.getElementById('assignForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
-            const msg = document.getElementById('msg');
+            const status = document.getElementById('statusMsg');
 
             btn.disabled = true;
-            msg.innerText = "Sending...";
+            btn.innerText = "Processing...";
 
-            const payload = {
+            const data = {
                 member: document.getElementById('member').value,
                 task: document.getElementById('task').value,
                 priority: document.getElementById('priority').value
             };
 
-            // Using fetch to talk to the Google Apps Script API
             fetch(SCRIPT_URL, {
                 method: 'POST',
-                mode: 'no-cors', // Essential for Google Scripts
-                cache: 'no-cache',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+                mode: 'no-cors', 
+                body: JSON.stringify(data)
             })
             .then(() => {
-                msg.innerText = "✅ Success! Sent to Sheets.";
-                msg.style.color = "green";
+                status.innerText = "✅ Assignment Synced Successfully!";
+                status.style.color = "#40C057";
                 document.getElementById('assignForm').reset();
                 btn.disabled = false;
+                btn.innerText = "Deploy to Sheets";
             })
-            .catch(error => {
-                msg.innerText = "❌ Error: " + error;
+            .catch(err => {
+                status.innerText = "❌ Connection Error";
+                status.style.color = "#FA5252";
                 btn.disabled = false;
             });
         });
     </script>
 </body>
-
 </html>
